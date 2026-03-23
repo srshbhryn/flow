@@ -1,0 +1,4 @@
+(executable
+ (public_name flow)
+ (name main)
+ (libraries flow))
