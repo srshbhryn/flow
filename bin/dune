@@ -1,7 +1,7 @@
 (executable
  (public_name proxy)
  (name proxy)
- (libraries flow lwt.unix)
+ (libraries flow lwt.unix cmdliner)
  (preprocess
   (pps lwt_ppx)))
 

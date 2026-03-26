@@ -46,3 +46,11 @@ let string_of_sockaddr = function
   | Unix.ADDR_INET (addr, port) ->
       Printf.sprintf "%s:%d" (Unix.string_of_inet_addr addr) port
   | Unix.ADDR_UNIX path -> path
+
+let sockaddr_of_string s =
+  match String.split_on_char ':' s with
+  | [ ip; port ] ->
+      let addr = Unix.inet_addr_of_string ip in
+      let port = int_of_string port in
+      Unix.ADDR_INET (addr, port)
+  | _ -> Unix.ADDR_UNIX s
