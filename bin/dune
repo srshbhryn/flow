@@ -8,4 +8,4 @@
 (executable
  (public_name echo)
  (name echo)
- (libraries flow lwt.unix))
+ (libraries flow lwt.unix cmdliner))
