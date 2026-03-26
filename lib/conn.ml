@@ -2,7 +2,6 @@ open Lwt.Syntax
 
 type t = { input : Lwt_io.input_channel; output : Lwt_io.output_channel }
 
-(* TODO exclude following function from Conn signature *)
 let rec pass i o =
   let* red = Lwt_io.read_line_opt i in
   match red with
