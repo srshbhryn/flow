@@ -1,2 +1,5 @@
 (library
- (name flow))
+ (name flow)
+ (libraries lwt.unix)
+ (preprocess
+  (pps lwt_ppx)))

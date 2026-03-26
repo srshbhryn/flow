@@ -1,4 +1,11 @@
 (executable
- (public_name flow)
- (name main)
- (libraries flow))
+ (public_name proxy)
+ (name proxy)
+ (libraries flow lwt.unix)
+ (preprocess
+  (pps lwt_ppx)))
+
+(executable
+ (public_name echo)
+ (name echo)
+ (libraries flow lwt.unix))
