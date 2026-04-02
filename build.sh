@@ -7,5 +7,7 @@ DIR="./_build/default/bin/"
 
 find "$DIR" -type f -name "*.exe" | while read -r file; do
   name=$(basename "$file")
-  ln -s "$file" "$name"
+  if [ ! -L "$name" ]; then
+    ln -s "$file" "$name"
+  fi
 done
