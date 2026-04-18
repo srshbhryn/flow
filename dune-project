@@ -5,22 +5,28 @@
 (generate_opam_files true)
 
 (source
- (github username/reponame))
+ (github srshbhryn/flow))
 
-(authors "Author Name")
+(authors "Sorush Bahariyan")
 
-(maintainers "Maintainer Name")
+(maintainers "Sorush Bahariyan <sorush.bahariyan@gmail.com>")
 
-(license LICENSE)
+(license MIT)
 
-(documentation https://url/to/documentation)
+(documentation https://srshbhryn.github.io/flow) ; TODO
 
 (package
  (name flow)
- (synopsis "A short synopsis")
- (description "A longer description")
- (depends ocaml dune)
+ (synopsis "Toy OCaml networking playground (echo + proxy   server)")
+ (description
+  "A small learning-oriented OCaml project demonstrating basic TCP
+   networking primitives, including a simple echo server and a TCP
+   proxy server. Designed for experimentation with sockets,
+   concurrency, and modular design in OCaml.")
+ (depends
+  ocaml
+  dune
+  (base (>= v0.16.0))
+ )
  (tags
-  (topics "to describe" your project)))
-
-; See the complete stanza docs at https://dune.readthedocs.io/en/stable/reference/dune-project/index.html
+  (topics networking tcp learning toy)))
