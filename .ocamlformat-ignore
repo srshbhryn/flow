@@ -1,0 +1,16 @@
+# Generated files
+_build
+*.pp.ml
+*.pp.mli
+
+# Vendored dependencies
+vendor
+node_modules
+
+# Dune generated
+*.gen.ml
+*.gen.mli
+
+# Opam file
+./flow.opam
+
