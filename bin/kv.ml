@@ -84,18 +84,21 @@ open Cmdliner
 
 let port_arg =
   let doc = "Port to listen on." in
-  Arg.(value & opt int 7000 & info [ "p"; "port" ] ~doc)
+  let env = Cmd.Env.info "KV_PORT" in
+  Arg.(value & opt int 7000 & info [ "p"; "port" ] ~doc ~env)
 ;;
 
 let store_arg =
-  let doc = "Store backend." in
+  let doc = "Store backend (list | hash)." in
+  let env = Cmd.Env.info "KV_STORE" in
   let stores = [ "list", `List; "hash", `Hash ] in
-  Arg.(value & opt (enum stores) `List & info [ "store" ] ~doc)
+  Arg.(value & opt (enum stores) `List & info [ "store" ] ~doc ~env)
 ;;
 
 let hash_size_arg =
   let doc = "Size of the hash store (used only when --store=hash)." in
-  Arg.(value & opt int 16 & info [ "hash-size" ] ~doc)
+  let env = Cmd.Env.info "KV_HASH_SIZE" in
+  Arg.(value & opt int 16 & info [ "hash-size" ] ~doc ~env)
 ;;
 
 let cmd =
