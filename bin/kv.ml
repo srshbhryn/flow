@@ -58,7 +58,7 @@ let server port config =
   let (Store ((module Store), store)) = create_store config in
   let module StoreActor = Kv_actor.Make (Store) in
   let* actor = StoreActor.start store in
-  let listen_address = Unix.(ADDR_INET (inet_addr_loopback, port)) in
+  let listen_address = Unix.(ADDR_INET (inet_addr_any, port)) in
   let _server =
     Lwt_io.establish_server_with_client_socket listen_address (fun _addr fd ->
       let ic = Lwt_io.of_fd ~mode:Lwt_io.Input fd in
