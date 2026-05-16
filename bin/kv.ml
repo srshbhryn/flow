@@ -69,12 +69,11 @@ let server port config =
   fst (Lwt.wait ())
 ;;
 
-let run port store =
+let run port store hash_size =
   let config =
     match store with
-    | "list" -> List
-    | "hash" -> Hashlib 16
-    | _ -> failwith "unknown store backend"
+    | `List -> List
+    | `Hash -> Hashlib hash_size
   in
   Lwt_main.run (server port config)
 ;;
@@ -89,14 +88,20 @@ let port_arg =
 ;;
 
 let store_arg =
-  let doc = "Store backend (list | hash). Default is list." in
-  Arg.(value & opt string "list" & info [ "store" ] ~doc)
+  let doc = "Store backend." in
+  let stores = [ "list", `List; "hash", `Hash ] in
+  Arg.(value & opt (enum stores) `List & info [ "store" ] ~doc)
+;;
+
+let hash_size_arg =
+  let doc = "Size of the hash store (used only when --store=hash)." in
+  Arg.(value & opt int 16 & info [ "hash-size" ] ~doc)
 ;;
 
 let cmd =
   let doc = "Run the Key-Value store TCP server" in
   let info = Cmd.info "kv" ~doc in
-  Cmd.v info Term.(const run $ port_arg $ store_arg)
+  Cmd.v info Term.(const run $ port_arg $ store_arg $ hash_size_arg)
 ;;
 
 let () = exit (Cmd.eval cmd)
