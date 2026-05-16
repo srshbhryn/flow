@@ -1,21 +1,32 @@
 open Flow
 open Lwt.Syntax
 
-type store_instance =
-  | Store : (module Kv_store.S with type t = 'a) * 'a -> store_instance
-
 type store_config =
   | List
   | Hashlib of int
+
+module type STORE_INSTANCE = sig
+  module Store : Kv_store.S
+
+  val store : Store.t
+end
 
 let create_store config =
   match config with
   | List ->
     let module S = Kv_store_list in
-    Store ((module S : Kv_store.S with type t = S.t), S.create ())
+    (module struct
+      module Store = S
+
+      let store = S.create ()
+    end : STORE_INSTANCE)
   | Hashlib n ->
     let module S = Kv_store_hashlib in
-    Store ((module S : Kv_store.S with type t = S.t), S.create n)
+    (module struct
+      module Store = S
+
+      let store = S.create n
+    end : STORE_INSTANCE)
 ;;
 
 let process_command actor line =
@@ -23,19 +34,19 @@ let process_command actor line =
   match parts with
   | [ "GET"; key ] ->
     let p, r = Lwt.task () in
-    let () = Actor.send actor (Kv_actor.Get (key, r)) in
+    Actor.send actor (Kv_actor.Get (key, r));
     let* result = p in
     (match result with
      | Some v -> Lwt.return ("VALUE " ^ v)
      | None -> Lwt.return "NOT_FOUND")
   | [ "SET"; key; value ] ->
     let p, r = Lwt.task () in
-    let () = Actor.send actor (Kv_actor.Set (key, value, r)) in
+    Actor.send actor (Kv_actor.Set (key, value, r));
     let* () = p in
     Lwt.return "OK"
   | [ "DELETE"; key ] ->
     let p, r = Lwt.task () in
-    let () = Actor.send actor (Kv_actor.Delete (key, r)) in
+    Actor.send actor (Kv_actor.Delete (key, r));
     let* existed = p in
     if existed then Lwt.return "DELETED" else Lwt.return "NOT_FOUND"
   | _ -> Lwt.return "ERROR: Invalid command"
@@ -55,9 +66,9 @@ let handle_connection _sockaddr ic oc actor =
 ;;
 
 let server port config =
-  let (Store ((module Store), store)) = create_store config in
-  let module StoreActor = Kv_actor.Make (Store) in
-  let* actor = StoreActor.start store in
+  let module I = (val create_store config) in
+  let module StoreActor = Kv_actor.Make (I.Store) in
+  let* actor = StoreActor.start I.store in
   let listen_address = Unix.(ADDR_INET (inet_addr_any, port)) in
   let _server =
     Lwt_io.establish_server_with_client_socket listen_address (fun _addr fd ->
