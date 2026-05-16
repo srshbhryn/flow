@@ -9,3 +9,8 @@
  (public_name echo)
  (name echo)
  (libraries flow lwt.unix cmdliner))
+
+(executable
+ (public_name kv)
+ (name kv)
+ (libraries flow lwt lwt.unix cmdliner))
